@@ -20,8 +20,10 @@ public class CodigoVipController {
     @Autowired
     private CodigoVipService codigoVipService;
 
-    @PostMapping
 
+
+    /*
+    @PostMapping
     public ResponseEntity<Map<String, Object>> generarCodigoVip(@RequestParam int cantidadRifas) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -37,7 +39,20 @@ public class CodigoVipController {
             response.put("message", "Error al generar el código VIP: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }*/
+
+
+    @PostMapping
+    public ResponseEntity<CodigoVip> generarCodigoVip(@RequestParam int cantidadRifas) {
+        try {
+            CodigoVip codigoVip = codigoVipService.generarCodigoVip(cantidadRifas);
+            return ResponseEntity.ok(codigoVip); // Retornamos el objeto con ID, código, cantidadRifas, utilizado
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<CodigoVip>> obtenerTodosLosCodigosVip() {

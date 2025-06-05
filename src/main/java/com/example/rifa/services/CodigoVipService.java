@@ -14,7 +14,7 @@ public class CodigoVipService {
     @Autowired
     private CodigoVipRepository codigoVipRepository;
 
-
+/*
     public String generarCodigoVip(int cantidadRifas) {
         String codigoPrefix = "VIP-";
         int longitudCodigo = 4; // Por defecto para 10 rifas
@@ -36,7 +36,31 @@ public class CodigoVipService {
         codigoVipRepository.save(codigoVip);
 
         return codigo;
+    }*/
+
+    public CodigoVip generarCodigoVip(int cantidadRifas) {
+        String codigoPrefix = "VIP-";
+        int longitudCodigo = 4; // Por defecto para 10 rifas
+
+        if (cantidadRifas == 15) {
+            longitudCodigo = 5;
+        } else if (cantidadRifas == 30) {
+            longitudCodigo = 6;
+        }
+
+        // Generar un código aleatorio de la longitud correspondiente
+        String codigo = codigoPrefix + UUID.randomUUID().toString().replace("-", "").substring(0, longitudCodigo).toUpperCase();
+
+        // Guardar el código VIP en la base de datos
+        CodigoVip codigoVip = new CodigoVip();
+        codigoVip.setCodigo(codigo);
+        codigoVip.setCantidadRifas(cantidadRifas);
+        codigoVip.setUtilizado(false);
+        codigoVip = codigoVipRepository.save(codigoVip); // Guardar y obtener el objeto completo con ID asignado
+
+        return codigoVip; // Retornar el objeto completo
     }
+
 
 
     public List<CodigoVip> obtenerTodosLosCodigosVip() {
