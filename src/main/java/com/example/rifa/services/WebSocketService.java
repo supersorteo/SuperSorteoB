@@ -15,11 +15,7 @@ public class WebSocketService {
         this.messagingTemplate = messagingTemplate;
     }
 
-  /*  public void sendRaffleExecutionStart(Long rifaId) {
-        System.out.println("✅ WebSocketService: enviando mensaje a /topic/raffle-execution...");
-        messagingTemplate.convertAndSend("/topic/raffle-execution", Map.of("rifaId", rifaId));
-        System.out.println("📡 Mensaje enviado a WebSocket: Rifa ejecutada con ID " + rifaId);
-    }*/
+
 
     public void sendRaffleExecutionStart(Long rifaId) {
         Map<String, Object> message = new HashMap<>();

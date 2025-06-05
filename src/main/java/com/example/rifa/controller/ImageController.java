@@ -40,7 +40,7 @@ public class ImageController {
                     String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                     Path filePath = Paths.get(UPLOAD_DIR + fileName);
                     Files.write(filePath, file.getBytes());
-                    String fileUrl = "http://localhost:8080/api/images/" + fileName;
+                    String fileUrl = "https://sweet-laughter-production.up.railway.app/api/images/" + fileName;
                     urls.add(fileUrl);
                     System.out.println("Archivo guardado: " + fileName);
                 }
@@ -89,7 +89,7 @@ public class ImageController {
                 for (File file : files) {
                     if (file.isFile()) {
                         // Agregar la URL completa de la imagen
-                        String fileUrl = "http://localhost:8080/api/images/" + file.getName();
+                        String fileUrl = "https://sweet-laughter-production.up.railway.app/api/images/" + file.getName();
                         fileNames.add(fileUrl);
                     }
                 }
