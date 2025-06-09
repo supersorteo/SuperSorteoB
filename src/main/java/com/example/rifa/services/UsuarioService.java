@@ -28,23 +28,6 @@ public class UsuarioService {
         return usuarioRepository.findById(id).orElse(null);
     }
 
-   /* public Usuario registrarUsuario(Usuario usuario) {
-        // Verificar si el correo electrónico ya está registrado
-        Usuario usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
-        if (usuarioExistente != null) {
-            throw new IllegalArgumentException("Este usuario ya está registrado");
-        }
-
-        // Validar que las contraseñas coincidan
-        if (!usuario.getPassword().equals(usuario.getConfirmarPassword())) {
-            throw new IllegalArgumentException("Las contraseñas no coinciden");
-        }
-
-        // Registrar el nuevo usuario
-        usuario.setFechaRegistro(ZonedDateTime.now(ZoneId.of("UTC")));
-        usuario.setEsVip(false); // Por defecto, no es VIP
-        return usuarioRepository.save(usuario);
-    }*/
 
     public Usuario registrarUsuario(Usuario usuario) {
         Usuario usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
@@ -59,7 +42,7 @@ public class UsuarioService {
         usuario.setFechaRegistro(ZonedDateTime.now(ZoneId.of("UTC")));
         usuario.setEsVip(false); // Por defecto, no es VIP
         usuario.setCantidadRifas(usuario.isEsVip() ? 10 : 1); // 🔥 Inicializamos según si es VIP
-
+        usuario.setPrimeraVez(true);
         return usuarioRepository.save(usuario);
     }
 

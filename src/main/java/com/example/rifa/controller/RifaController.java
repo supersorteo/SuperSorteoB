@@ -54,6 +54,9 @@ public class RifaController {
         return ResponseEntity.ok(rifas);
     }
 
+
+
+
     @PutMapping("/{id}")
     public ResponseEntity<Rifa> actualizarRifa(@PathVariable Long id, @RequestBody Rifa rifaActualizada) {
         Rifa rifa = rifaService.actualizarRifa(id, rifaActualizada);

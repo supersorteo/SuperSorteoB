@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -41,22 +43,8 @@ public class UsuarioController {
         }
     }
 
-  /*  @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Usuario usuario) {
-        Optional<Usuario> foundUser = usuarioService.findUserByEmail(usuario.getEmail());
-        if (foundUser.isPresent()) {
-            Usuario existingUser = foundUser.get();
-            if (existingUser.getPassword().equals(usuario.getPassword())) {
-                return ResponseEntity.ok(existingUser);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contraseña incorrecta");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario no registrado");
-        }
-    }*/
 
-
+/*
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Usuario usuario) {
         Optional<Usuario> foundUser = usuarioService.findUserByEmail(usuario.getEmail());
@@ -70,7 +58,36 @@ public class UsuarioController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario no registrado");
         }
+    }*/
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody Usuario usuario) {
+        Optional<Usuario> foundUser = usuarioService.findUserByEmail(usuario.getEmail());
+
+        if (foundUser.isPresent()) {
+            Usuario existingUser = foundUser.get();
+
+            if (existingUser.getPassword().equals(usuario.getPassword())) {
+                // 🔥 Si es su primer login, actualizar `primeraVez = false`
+                boolean primerLogin = existingUser.isPrimeraVez();
+                if (primerLogin) {
+                    existingUser.setPrimeraVez(false);
+                    usuarioService.actualizarUsuario(existingUser.getId(), existingUser);
+                }
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("usuario", existingUser);
+                response.put("primerInicioSesion", primerLogin);
+
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contraseña incorrecta");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario no registrado");
+        }
     }
+
 
 
     @PostMapping("/recuperar-password")

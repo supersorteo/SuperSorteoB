@@ -28,7 +28,7 @@ public class Usuario {
     private String codigoVip;
     private Integer cantidadRifas;
     private ZonedDateTime fechaRegistro;
-
+    private boolean primeraVez = true;
 
     public int getId() {
         return id;
@@ -116,5 +116,13 @@ public class Usuario {
 
     public void setFechaRegistro(ZonedDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public boolean isPrimeraVez() {
+        return primeraVez;
+    }
+
+    public void setPrimeraVez(boolean primeraVez) {
+        this.primeraVez = primeraVez;
     }
 }
