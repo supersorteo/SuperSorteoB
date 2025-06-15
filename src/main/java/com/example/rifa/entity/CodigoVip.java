@@ -12,6 +12,9 @@ public class CodigoVip {
     private String codigo;
     private boolean utilizado;
     private int cantidadRifas;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuarioAsignado;
 
     public Long getId() {
         return id;
@@ -43,5 +46,12 @@ public class CodigoVip {
 
     public void setCantidadRifas(int cantidadRifas) {
         this.cantidadRifas = cantidadRifas;
+    }
+    public Usuario getUsuarioAsignado() {
+        return usuarioAsignado;
+    }
+
+    public void setUsuarioAsignado(Usuario usuarioAsignado) {
+        this.usuarioAsignado = usuarioAsignado;
     }
 }

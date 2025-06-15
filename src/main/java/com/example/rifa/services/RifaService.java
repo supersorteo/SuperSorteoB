@@ -64,6 +64,9 @@ public class RifaService {
                 usuario.setEsVip(true);
                 usuario.setCodigoVip(codigoVip);
                 usuario.setCantidadRifas(codigo.getCantidadRifas());
+
+                usuario.setFechaRegistro(ZonedDateTime.now());
+
                 usuarioRepository.save(usuario);
                 codigo.setUtilizado(true);
                 codigoVipRepository.save(codigo);
