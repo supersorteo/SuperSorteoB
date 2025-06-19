@@ -2,11 +2,13 @@ com\example\rifa\exception\ResourceNotFoundException.class
 com\example\rifa\dto\RaffleDTO.class
 com\example\rifa\RifaApplication.class
 com\example\rifa\controller\VideoController.class
+com\example\rifa\controller\AdministradorController.class
 com\example\rifa\repository\ParticipanteRepository.class
 com\example\rifa\repository\RifaRepository.class
 com\example\rifa\entity\CodigoVip.class
 com\example\rifa\controller\UsuarioController.class
 com\example\rifa\exception\GlobalExceptionHandler.class
+com\example\rifa\services\AdministradorService.class
 com\example\rifa\repository\UsuarioRepository.class
 com\example\rifa\security\WebConfig.class
 com\example\rifa\services\RifaService.class
@@ -20,7 +22,9 @@ com\example\rifa\data\CustomError.class
 com\example\rifa\services\CodigoVipService.class
 com\example\rifa\dto\CrearRifaRequest.class
 com\example\rifa\data\WebSocketConfig.class
+com\example\rifa\entity\Administrador.class
 com\example\rifa\services\UsuarioService.class
+com\example\rifa\repository\AdministradorRepository.class
 com\example\rifa\controller\ParticipanteController.class
 com\example\rifa\controller\RifaController.class
 com\example\rifa\services\ParticipanteService.class

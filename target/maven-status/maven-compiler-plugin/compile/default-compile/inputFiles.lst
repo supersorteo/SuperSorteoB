@@ -1,3 +1,4 @@
+D:\SuperSorteo\rifa\src\main\java\com\example\rifa\controller\AdministradorController.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\controller\CodigoVipController.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\controller\ImageController.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\controller\ParticipanteController.java
@@ -9,6 +10,7 @@ D:\SuperSorteo\rifa\src\main\java\com\example\rifa\data\WebSocketConfig.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\dto\CrearRifaRequest.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\dto\RaffleDTO.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\dto\RifaGanadorDTO.java
+D:\SuperSorteo\rifa\src\main\java\com\example\rifa\entity\Administrador.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\entity\CodigoVip.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\entity\Participante.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\entity\Producto.java
@@ -16,6 +18,7 @@ D:\SuperSorteo\rifa\src\main\java\com\example\rifa\entity\Rifa.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\entity\Usuario.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\exception\GlobalExceptionHandler.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\exception\ResourceNotFoundException.java
+D:\SuperSorteo\rifa\src\main\java\com\example\rifa\repository\AdministradorRepository.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\repository\CodigoVipRepository.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\repository\ParticipanteRepository.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\repository\ProductRepository.java
@@ -24,6 +27,7 @@ D:\SuperSorteo\rifa\src\main\java\com\example\rifa\repository\UsuarioRepository.
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\RifaApplication.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\security\SecurityConfig.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\security\WebConfig.java
+D:\SuperSorteo\rifa\src\main\java\com\example\rifa\services\AdministradorService.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\services\CodigoVipService.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\services\EmailService.java
 D:\SuperSorteo\rifa\src\main\java\com\example\rifa\services\ParticipanteService.java
