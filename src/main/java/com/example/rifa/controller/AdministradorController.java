@@ -30,7 +30,7 @@ public class AdministradorController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrectos.");
         }
     }
-
+/*
     @PutMapping("/password")
     public ResponseEntity<?> cambiarPassword(@RequestBody Map<String, String> payload) {
         String username = payload.get("username");
@@ -42,9 +42,30 @@ public class AdministradorController {
 
         boolean actualizado = adminService.cambiarPassword(username, newPassword);
         if (actualizado) {
-            return ResponseEntity.ok().body("Contraseña actualizada.");
+            //return ResponseEntity.ok().body("Contraseña actualizada.");
+            return ResponseEntity.ok().body(Map.of("message", "Contraseña actualizada."));
+
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No se pudo actualizar.");
+        }
+    }*/
+
+    @PutMapping("/password")
+    public ResponseEntity<?> cambiarPassword(@RequestBody Map<String, String> payload) {
+        String username = payload.get("username");
+        String newPassword = payload.get("newPassword");
+
+        if (!adminService.existeAdministrador(username)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Administrador no encontrado."));
+        }
+
+        boolean actualizado = adminService.cambiarPassword(username, newPassword);
+        if (actualizado) {
+            return ResponseEntity.ok(Map.of("success", true, "message", "Contraseña actualizada."));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "No se pudo actualizar."));
         }
     }
 
