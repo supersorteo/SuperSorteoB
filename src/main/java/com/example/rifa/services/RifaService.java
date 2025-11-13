@@ -624,9 +624,9 @@ public class RifaService {
 
             // 🔁 URLs de redirección
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                    .success("http://localhost:4200/success")
-                    .failure("http://localhost:4200/failure")
-                    .pending("http://localhost:4200/pending")
+                    .success("https://supersorteo-5f1f3.web.app/success")
+                    .failure("https://supersorteo-5f1f3.web.app/failure")
+                    .pending("https://supersorteo-5f1f3.web.app/pending")
                     .build();
 
             // 🧠 Construir preferencia completa
