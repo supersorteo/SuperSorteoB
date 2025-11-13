@@ -2,10 +2,12 @@ package com.example.rifa.controller;
 
 import com.example.rifa.entity.CodigoVip;
 import com.example.rifa.services.CodigoVipService;
+import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
 import com.mercadopago.client.preference.PreferenceRequest;
+import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.resources.preference.Preference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,11 +43,18 @@ public class CodigoVipController {
     }
 
 
-    @PostMapping("/pago")
+    /*@PostMapping("/pago")
     public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
         try {
+
+            MercadoPagoConfig.setAccessToken("APP_USR-2830553727018436-111212-36bcd222790027ee0e3220aa5a01701f-2392507839");
+
             int cantidadRifas = Integer.parseInt(payload.get("cantidadRifas").toString());
             int usuarioId = Integer.parseInt(payload.get("usuarioId").toString());
+
+            System.out.println("🔍 Datos recibidos:");
+            System.out.println("Cantidad de rifas: " + cantidadRifas);
+            System.out.println("ID dekl usuario: " + usuarioId);
 
             // Generar código VIP
             CodigoVip codigoVip = codigoVipService.generarCodigoVip(cantidadRifas);
@@ -82,7 +91,80 @@ public class CodigoVipController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al generar preferencia: " + e.getMessage()));
         }
+    }*/
+
+    @PostMapping("/pago")
+    public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
+        try {
+            // ✅ Configurar el token de acceso
+            MercadoPagoConfig.setAccessToken("APP_USR-2830553727018436-111212-36bcd222790027ee0e3220aa5a01701f-2392507839");
+
+            // ✅ Extraer datos del payload
+            int cantidadRifas = Integer.parseInt(payload.get("cantidadRifas").toString());
+            int usuarioId = Integer.parseInt(payload.get("usuarioId").toString());
+
+            System.out.println("🔍 Datos recibidos:");
+            System.out.println("Cantidad de rifas: " + cantidadRifas);
+            System.out.println("ID del usuario: " + usuarioId);
+
+            // ✅ Generar código VIP
+            CodigoVip codigoVip = codigoVipService.generarCodigoVip(cantidadRifas);
+            System.out.println("🎟️ Código generado: " + codigoVip.getCodigo());
+            System.out.println("💰 Precio asignado: " + codigoVip.getPrecio());
+
+            // ✅ Validar precio
+            if (codigoVip.getPrecio() <= 0) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Precio inválido para la cantidad de rifas."));
+            }
+
+            // ✅ Crear ítem de preferencia
+            PreferenceItemRequest item = PreferenceItemRequest.builder()
+                    .title("Código VIP - " + cantidadRifas + " rifas")
+                    .quantity(1)
+                    .unitPrice(BigDecimal.valueOf(codigoVip.getPrecio()))
+                    .currencyId("ARS")
+                    .build();
+
+            // ✅ URLs de retorno
+            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
+                    .success("https://supersorteo-5f1f3.web.app/success")
+                    .failure("https://supersorteo-5f1f3.web.app/failure")
+                    .pending("https://supersorteo-5f1f3.web.app/pending")
+                    .build();
+
+            // ✅ Crear preferencia
+            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
+                    .items(List.of(item))
+                    .backUrls(backUrls)
+                    .autoReturn("approved")
+                    .build();
+
+            Preference preference = new PreferenceClient().create(preferenceRequest);
+
+            System.out.println("✅ Preferencia creada - ID: " + preference.getId());
+            System.out.println("🔗 Init Point: " + preference.getInitPoint());
+
+            Map<String, String> response = new HashMap<>();
+            response.put("initPoint", preference.getInitPoint());
+            response.put("id", preference.getId());
+
+            return ResponseEntity.ok(response);
+
+        } catch (MPApiException e) {
+            System.out.println("❌ MPApiException:");
+            System.out.println("Status Code: " + e.getStatusCode());
+            System.out.println("Content: " + e.getApiResponse().getContent());
+            System.out.println("Cause: " + e.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error Mercado Pago: " + e.getMessage()));
+        } catch (Exception e) {
+            System.out.println("❌ Error general: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error inesperado: " + e.getMessage()));
+        }
     }
+
+
 
 
     @GetMapping
