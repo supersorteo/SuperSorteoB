@@ -16,7 +16,7 @@ public class CodigoVipService {
 
 
 
-    public CodigoVip generarCodigoVip(int cantidadRifas) {
+    public CodigoVip generarCodigoVip0(int cantidadRifas) {
         String codigoPrefix = "VIP-";
         int longitudCodigo = 4; // Por defecto para 10 rifas
 
@@ -38,6 +38,34 @@ public class CodigoVipService {
 
         return codigoVip; // Retornar el objeto completo
     }
+
+    public CodigoVip generarCodigoVip(int cantidadRifas) {
+        String codigoPrefix = "VIP-";
+        int longitudCodigo = 4;
+        double precio = 0;
+
+        if (cantidadRifas == 10) {
+            longitudCodigo = 4;
+            precio = 5200.0;
+        } else if (cantidadRifas == 15) {
+            longitudCodigo = 5;
+            precio = 8400.0;
+        } else if (cantidadRifas == 30) {
+            longitudCodigo = 6;
+            precio = 10400.0;
+        }
+
+        String codigo = codigoPrefix + UUID.randomUUID().toString().replace("-", "").substring(0, longitudCodigo).toUpperCase();
+
+        CodigoVip codigoVip = new CodigoVip();
+        codigoVip.setCodigo(codigo);
+        codigoVip.setCantidadRifas(cantidadRifas);
+        codigoVip.setPrecio(precio);
+        codigoVip.setUtilizado(false);
+
+        return codigoVipRepository.save(codigoVip);
+    }
+
 
 
 

@@ -15,6 +15,8 @@ public class CodigoVip {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuarioAsignado;
+    private double precio;
+
 
     public Long getId() {
         return id;
@@ -54,4 +56,13 @@ public class CodigoVip {
     public void setUsuarioAsignado(Usuario usuarioAsignado) {
         this.usuarioAsignado = usuarioAsignado;
     }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
 }
