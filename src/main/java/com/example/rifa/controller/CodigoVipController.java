@@ -147,6 +147,7 @@ public class CodigoVipController {
             Map<String, String> response = new HashMap<>();
             response.put("initPoint", preference.getInitPoint());
             response.put("id", preference.getId());
+            response.put("precio", String.valueOf(codigoVip.getPrecio()));
 
             return ResponseEntity.ok(response);
 
