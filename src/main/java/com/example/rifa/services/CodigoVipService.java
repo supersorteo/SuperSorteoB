@@ -44,13 +44,13 @@ public class CodigoVipService {
         int longitudCodigo = 4;
         double precio = 0;
 
-        if (cantidadRifas == 10) {
+        if (cantidadRifas == 5) {
             longitudCodigo = 4;
             precio = 5200.0;
-        } else if (cantidadRifas == 15) {
+        } else if (cantidadRifas == 10) {
             longitudCodigo = 5;
             precio = 8400.0;
-        } else if (cantidadRifas == 30) {
+        } else if (cantidadRifas == 15) {
             longitudCodigo = 6;
             precio = 10400.0;
         }
