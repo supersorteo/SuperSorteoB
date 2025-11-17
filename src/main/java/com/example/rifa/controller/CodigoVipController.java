@@ -43,55 +43,6 @@ public class CodigoVipController {
     }
 
 
-    /*@PostMapping("/pago")
-    public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
-        try {
-
-            MercadoPagoConfig.setAccessToken("APP_USR-2830553727018436-111212-36bcd222790027ee0e3220aa5a01701f-2392507839");
-
-            int cantidadRifas = Integer.parseInt(payload.get("cantidadRifas").toString());
-            int usuarioId = Integer.parseInt(payload.get("usuarioId").toString());
-
-            System.out.println("🔍 Datos recibidos:");
-            System.out.println("Cantidad de rifas: " + cantidadRifas);
-            System.out.println("ID dekl usuario: " + usuarioId);
-
-            // Generar código VIP
-            CodigoVip codigoVip = codigoVipService.generarCodigoVip(cantidadRifas);
-
-            // Crear preferencia Mercado Pago
-            PreferenceItemRequest item =
-                    PreferenceItemRequest.builder()
-                            .title("Código VIP - " + cantidadRifas + " rifas")
-                            .quantity(1)
-                            .unitPrice(BigDecimal.valueOf((float) codigoVip.getPrecio()))
-                            .currencyId("ARS")
-                            .build();
-
-            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                    .success("https://supersorteo-5f1f3.web.app/success")
-                    .failure("https://supersorteo-5f1f3.web.app/failure")
-                    .pending("https://supersorteo-5f1f3.web.app/pending")
-                    .build();
-
-            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
-                    .items(List.of(item))
-                    .backUrls(backUrls)
-                    .autoReturn("approved")
-                    .build();
-
-            Preference preference = new PreferenceClient().create(preferenceRequest);
-
-            Map<String, String> response = new HashMap<>();
-            response.put("initPoint", preference.getInitPoint());
-            response.put("id", preference.getId());
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al generar preferencia: " + e.getMessage()));
-        }
-    }*/
 
     @PostMapping("/pago")
     public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
@@ -194,6 +145,12 @@ public class CodigoVipController {
     public ResponseEntity<Void> eliminarCodigoVip(@PathVariable Long id) {
         codigoVipService.eliminarCodigoVip(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/vendidos")
+    public ResponseEntity<List<CodigoVip>> getSoldCodesWithUserDetails() {
+        List<CodigoVip> soldCodes = codigoVipService.getSoldCodesWithUserDetails();
+        return ResponseEntity.ok(soldCodes);
     }
 
 

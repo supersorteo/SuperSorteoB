@@ -99,4 +99,8 @@ public class CodigoVipService {
     }
 
 
+    public List<CodigoVip> getSoldCodesWithUserDetails() {
+        return codigoVipRepository.findAllSoldCodesWithUserDetails();
+    }
+
 }

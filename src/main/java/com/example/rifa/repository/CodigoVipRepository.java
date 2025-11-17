@@ -18,4 +18,7 @@ public interface CodigoVipRepository extends JpaRepository<CodigoVip, Long> {
 
     @Query("SELECT c FROM CodigoVip c WHERE c.usuarioAsignado.id = :usuarioId")
     List<CodigoVip> findAllByUsuarioId(@Param("usuarioId") Integer usuarioId);
+
+    @Query("SELECT c FROM CodigoVip c JOIN FETCH c.usuarioAsignado u WHERE c.utilizado = true ORDER BY c.id DESC")
+    List<CodigoVip> findAllSoldCodesWithUserDetails();
 }
