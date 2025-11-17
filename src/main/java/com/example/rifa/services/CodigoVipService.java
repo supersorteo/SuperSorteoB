@@ -49,13 +49,13 @@ public class CodigoVipService {
 
         if (cantidadRifas == 5) {
             longitudCodigo = 4;
-            precio = 5200.0;
+            precio = 300.0;
         } else if (cantidadRifas == 10) {
             longitudCodigo = 5;
-            precio = 8400.0;
+            precio = 450.0;
         } else if (cantidadRifas == 15) {
             longitudCodigo = 6;
-            precio = 10400.0;
+            precio = 500.0;
         }
 
         String codigo = codigoPrefix + UUID.randomUUID().toString().replace("-", "").substring(0, longitudCodigo).toUpperCase();
