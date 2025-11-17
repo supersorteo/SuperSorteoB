@@ -97,7 +97,11 @@ public class CodigoVipController {
     public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
         try {
             // ✅ Configurar el token de acceso
-            MercadoPagoConfig.setAccessToken("APP_USR-2830553727018436-111212-36bcd222790027ee0e3220aa5a01701f-2392507839");
+            //prueba
+           // MercadoPagoConfig.setAccessToken("APP_USR-2830553727018436-111212-36bcd222790027ee0e3220aa5a01701f-2392507839");
+
+            //produccion
+            MercadoPagoConfig.setAccessToken("APP_USR-5214207697296450-102008-8f7211acae008977d555578fd793ed5e-57269258");
 
             // ✅ Extraer datos del payload
             int cantidadRifas = Integer.parseInt(payload.get("cantidadRifas").toString());
