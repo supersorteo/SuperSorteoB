@@ -39,6 +39,9 @@ public class CodigoVipService {
         return codigoVip; // Retornar el objeto completo
     }
 
+
+
+
     public CodigoVip generarCodigoVip(int cantidadRifas) {
         String codigoPrefix = "VIP-";
         int longitudCodigo = 4;
@@ -46,13 +49,13 @@ public class CodigoVipService {
 
         if (cantidadRifas == 5) {
             longitudCodigo = 4;
-            precio = 300.0;
+            precio = 5200.0;
         } else if (cantidadRifas == 10) {
             longitudCodigo = 5;
-            precio = 450.0;
+            precio = 8400.0;
         } else if (cantidadRifas == 15) {
             longitudCodigo = 6;
-            precio = 500.0;
+            precio = 10400.0;
         }
 
         String codigo = codigoPrefix + UUID.randomUUID().toString().replace("-", "").substring(0, longitudCodigo).toUpperCase();
@@ -65,7 +68,6 @@ public class CodigoVipService {
 
         return codigoVipRepository.save(codigoVip);
     }
-
 
 
 
