@@ -48,7 +48,7 @@ public class CodigoVipController {
 
 
 
-    @PostMapping("/pago")
+    /*@PostMapping("/pago")
     public ResponseEntity<Map<String, String>> generarPreferenciaPago0(@RequestBody Map<String, Object> payload) {
         try {
             // ✅ Configurar el token de acceso
@@ -122,7 +122,7 @@ public class CodigoVipController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error inesperado: " + e.getMessage()));
         }
-    }
+    }*/
 
     @PostMapping("/pago")
     public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
