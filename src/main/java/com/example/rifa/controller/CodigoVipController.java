@@ -2,6 +2,7 @@ package com.example.rifa.controller;
 
 import com.example.rifa.entity.CodigoVip;
 import com.example.rifa.services.CodigoVipService;
+import com.example.rifa.services.UsuarioService;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
@@ -28,6 +29,9 @@ public class CodigoVipController {
     @Autowired
     private CodigoVipService codigoVipService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
 
 
 
@@ -45,7 +49,7 @@ public class CodigoVipController {
 
 
     @PostMapping("/pago")
-    public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Map<String, String>> generarPreferenciaPago0(@RequestBody Map<String, Object> payload) {
         try {
             // ✅ Configurar el token de acceso
             //prueba
@@ -120,7 +124,62 @@ public class CodigoVipController {
         }
     }
 
+    @PostMapping("/pago")
+    public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
+        try {
+            MercadoPagoConfig.setAccessToken("APP_USR-5214207697296450-102008-8f7211acae008977d555578fd793ed5e-57269258");
+            int cantidadRifas = Integer.parseInt(payload.get("cantidadRifas").toString());
+            int usuarioId = Integer.parseInt(payload.get("usuarioId").toString());
 
+            System.out.println("🔍 Datos recibidos:");
+            System.out.println("Cantidad de rifas: " + cantidadRifas);
+            System.out.println("ID del usuario: " + usuarioId);
+
+
+            // Genera código VIP
+            CodigoVip codigoVip = codigoVipService.generarCodigoVip(cantidadRifas);
+            System.out.println("🎟️ Código generado: " + codigoVip.getCodigo());
+            System.out.println("💰 Precio asignado: " + codigoVip.getPrecio());
+            System.out.println("💰 Cantidad de rifas: " + codigoVip.getCantidadRifas());
+
+
+            // Asigna VIP al usuario automáticamente
+            usuarioService.activarVip(usuarioId, codigoVip.getCodigo()); // Tu método existente
+
+            // Crea preference MP
+            PreferenceItemRequest item = PreferenceItemRequest.builder()
+                    .title("Código VIP - " + cantidadRifas + " rifas")
+                    .quantity(1)
+                    .unitPrice(BigDecimal.valueOf(codigoVip.getPrecio()))
+                    .currencyId("ARS")
+                    .build();
+
+            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
+                    .success("https://supersorteo-5f1f3.web.app/success?usuarioId=" + usuarioId) // Pasa usuarioId
+                    .failure("https://supersorteo-5f1f3.web.app/failure")
+                    .pending("https://supersorteo-5f1f3.web.app/pending")
+                    .build();
+
+            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
+                    .items(List.of(item))
+                    .backUrls(backUrls)
+                    .autoReturn("approved")
+                    .metadata(Map.of("usuarioId", String.valueOf(usuarioId)))
+                    .build();
+
+            Preference preference = new PreferenceClient().create(preferenceRequest);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("initPoint", preference.getInitPoint());
+            response.put("id", preference.getId());
+            response.put("precio", String.valueOf(codigoVip.getPrecio()));
+            response.put("codigoVip", codigoVip.getCodigo()); // Opcional: Frontend muestra código
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error inesperado: " + e.getMessage()));
+        }
+    }
 
 
     @GetMapping
