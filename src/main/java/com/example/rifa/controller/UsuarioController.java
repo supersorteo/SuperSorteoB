@@ -3,6 +3,7 @@ package com.example.rifa.controller;
 import com.example.rifa.entity.CodigoVip;
 import com.example.rifa.entity.Usuario;
 import com.example.rifa.exception.ResourceNotFoundException;
+import com.example.rifa.repository.CodigoVipRepository;
 import com.example.rifa.repository.UsuarioRepository;
 import com.example.rifa.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,12 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CodigoVipRepository codigoVipRepository;
 
 
 
@@ -130,7 +137,27 @@ public class UsuarioController {
     }
 
 
+    @GetMapping("/{userId}/vip-initial")
+    public ResponseEntity<Map<String, Integer>> getVipInitialLimit(@PathVariable Integer userId) {
+        try {
+            Usuario usuario = usuarioRepository.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
+            int initialRifas = 1; // Default no VIP
+            if (usuario.isEsVip() && usuario.getCodigoVip() != null) {
+                Optional<CodigoVip> codigoOpt = codigoVipRepository.findByCodigo(usuario.getCodigoVip());
+                if (codigoOpt.isPresent()) {
+                    initialRifas = codigoOpt.get().getCantidadRifas(); // Límite fijo del código
+                }
+            }
+
+            Map<String, Integer> response = new HashMap<>();
+            response.put("initialRifas", initialRifas);
+            return ResponseEntity.ok(response);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
 
