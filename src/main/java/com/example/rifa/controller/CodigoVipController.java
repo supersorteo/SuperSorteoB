@@ -3,12 +3,15 @@ package com.example.rifa.controller;
 import com.example.rifa.entity.CodigoVip;
 import com.example.rifa.services.CodigoVipService;
 import com.example.rifa.services.UsuarioService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercadopago.MercadoPagoConfig;
+import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
 import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -124,7 +127,9 @@ public class CodigoVipController {
         }
     }*/
 
-    @PostMapping("/pago")
+
+
+    /*@PostMapping("/pago")
     public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
         try {
             MercadoPagoConfig.setAccessToken("APP_USR-5214207697296450-102008-8f7211acae008977d555578fd793ed5e-57269258");
@@ -180,7 +185,94 @@ public class CodigoVipController {
                     .body(Map.of("error", "Error inesperado: " + e.getMessage()));
         }
     }
+*/
 
+
+    @PostMapping("/pago")
+    public ResponseEntity<Map<String, String>> generarPreferenciaPago(@RequestBody Map<String, Object> payload) {
+        try {
+            MercadoPagoConfig.setAccessToken("APP_USR-5214207697296450-102008-8f7211acae008977d555578fd793ed5e-57269258");
+            int cantidadRifas = Integer.parseInt(payload.get("cantidadRifas").toString());
+            int usuarioId = Integer.parseInt(payload.get("usuarioId").toString());
+
+            System.out.println("🔍 Datos recibidos:");
+            System.out.println("Cantidad de rifas: " + cantidadRifas);
+            System.out.println("ID del usuario: " + usuarioId);
+
+            // 🔥 NO genera código VIP aquí (solo preference para pago)
+            // Crea preference MP
+            PreferenceItemRequest item = PreferenceItemRequest.builder()
+                    .title("Código VIP - " + cantidadRifas + " rifas")
+                    .quantity(1)
+                    .unitPrice(BigDecimal.valueOf(getPrecioPorCantidad(cantidadRifas))) // Método para precio dinámico
+                    .currencyId("ARS")
+                    .build();
+
+            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
+                    .success("https://supersorteo-5f1f3.web.app/success?usuarioId=" + usuarioId)
+                    .failure("https://supersorteo-5f1f3.web.app/failure")
+                    .pending("https://supersorteo-5f1f3.web.app/pending")
+                    .build();
+
+            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
+                    .items(List.of(item))
+                    .backUrls(backUrls)
+                    .autoReturn("approved")
+                    .metadata(Map.of(
+                            "usuarioId", String.valueOf(usuarioId),
+                            "cantidadRifas", String.valueOf(cantidadRifas)
+                    ))
+                    .build();
+
+            Preference preference = new PreferenceClient().create(preferenceRequest);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("initPoint", preference.getInitPoint());
+            response.put("id", preference.getId());
+            response.put("precio", String.valueOf(getPrecioPorCantidad(cantidadRifas)));
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error inesperado: " + e.getMessage()));
+        }
+    }
+
+    // 🔥 Método helper para precio dinámico
+    private double getPrecioPorCantidad(int cantidadRifas) {
+        if (cantidadRifas == 5) return 300.0;
+        if (cantidadRifas == 10) return 450.0;
+        if (cantidadRifas == 15) return 500.0;
+        return 450.0; // Default
+    }
+
+    @PostMapping("/webhook")
+    public ResponseEntity<Void> webhook(@RequestBody String body) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> notification = mapper.readValue(body, Map.class);
+            if ("payment".equals(notification.get("type"))) {
+                Map<String, String> data = (Map<String, String>) notification.get("data");
+                String paymentId = data.get("id");
+                MercadoPagoConfig.setAccessToken("TU_TOKEN");
+                PaymentClient client = new PaymentClient();
+                Payment payment = client.get(Long.valueOf(paymentId));
+                if ("approved".equals(payment.getStatus())) {
+                    Map<String, Object> metadata = payment.getMetadata();
+                    int usuarioId = Integer.parseInt((String) metadata.get("usuarioId"));
+                    int cantidadRifas = Integer.parseInt((String) metadata.get("cantidadRifas"));
+                    // Genera código VIP
+                    CodigoVip codigoVip = codigoVipService.generarCodigoVip(cantidadRifas);
+                    // Activa VIP
+                    usuarioService.activarVip(usuarioId, codigoVip.getCodigo());
+                }
+            }
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.err.println("Webhook error: " + e.getMessage());
+            return ResponseEntity.ok().build(); // Siempre 200
+        }
+    }
 
     @GetMapping
     public ResponseEntity<List<CodigoVip>> obtenerTodosLosCodigosVip() {
