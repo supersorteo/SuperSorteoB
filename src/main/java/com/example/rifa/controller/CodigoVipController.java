@@ -208,10 +208,16 @@ public class CodigoVipController {
                     .currencyId("ARS")
                     .build();
 
-            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
+            /*PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
                     .success("https://supersorteo-5f1f3.web.app/success?usuarioId=" + usuarioId)
                     .failure("https://supersorteo-5f1f3.web.app/failure")
                     .pending("https://supersorteo-5f1f3.web.app/pending")
+                    .build();*/
+
+            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
+                    .success("https://supersorteo-5f1f3.web.app/dashboard")  // ← Directo al dashboard
+                    .failure("https://supersorteo-5f1f3.web.app/dashboard")  // ← Igual, para ver error
+                    .pending("https://supersorteo-5f1f3.web.app/dashboard")
                     .build();
 
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
