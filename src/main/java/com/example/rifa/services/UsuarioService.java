@@ -373,57 +373,7 @@ public class UsuarioService {
         return usuario;
     }*/
 
-
-    public Usuario activarVip(int userId, String codigoIngresado) {
-        // 🔹 Buscar el usuario
-        Usuario usuario = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
-
-        // 🔹 Buscar el código VIP
-        Optional<CodigoVip> codigoVipOpt = codigoVipRepository.findByCodigo(codigoIngresado);
-        if (codigoVipOpt.isEmpty()) {
-            throw new IllegalArgumentException("El código VIP ingresado no existe en la base de datos.");
-        }
-
-        CodigoVip codigoVip = codigoVipOpt.get();
-
-        // 🔹 Verificar si el código ya está utilizado
-        if (codigoVip.isUtilizado()) {
-            throw new IllegalArgumentException("Este código ya fue utilizado.");
-        }
-
-        // 🔹 Verificar si el código está reservado por otro usuario
-        if (codigoVip.getUsuarioAsignado() != null && codigoVip.getUsuarioAsignado().getId() != userId) {
-            throw new IllegalArgumentException("Este código VIP está reservado por otro usuario.");
-        }
-
-        // 🔹 Verificar VIP: Solo permitir nuevo código si cantidadRifas = 0 (cuenta vencida)
-        if (usuario.isEsVip()) {
-            if (usuario.getCantidadRifas() > 1) {
-                throw new IllegalArgumentException("Este usuario ya tiene un código VIP activo con rifas restantes. Agote las rifas para renovar.");
-            }
-            // Si cantidadRifas = 1, permite renovación (resetea a nuevo código)
-            System.out.println("Renovando código VIP vencido para usuario " + userId + " (rifas restantes: 0)");
-        }
-
-        // 🔥 Activar VIP
-        usuario.setEsVip(true);
-        usuario.setCodigoVip(codigoIngresado);
-        usuario.setCantidadRifas(codigoVip.getCantidadRifas()); // Resetea rifas al nuevo código
-        usuario.setFechaRegistro(ZonedDateTime.now());
-
-        // 🔹 Marcar código como utilizado
-        codigoVip.setUtilizado(true);
-        codigoVip.setUsuarioAsignado(usuario);
-
-        // 🔹 Guardar cambios
-        usuarioRepository.save(usuario);
-        codigoVipRepository.save(codigoVip);
-
-        return usuario;
-    }
-
-    public Usuario activarVip1(int userId, String codigoIngresado) {
+   /* public Usuario activarVip1(int userId, String codigoIngresado) {
         // 🔹 Buscar el usuario
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
@@ -471,7 +421,109 @@ public class UsuarioService {
         codigoVipRepository.save(codigoVip);
 
         return usuario;
+    }*/
+
+
+    public Usuario activarVip0(int userId, String codigoIngresado) {
+        // 🔹 Buscar el usuario
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
+
+        // 🔹 Buscar el código VIP
+        Optional<CodigoVip> codigoVipOpt = codigoVipRepository.findByCodigo(codigoIngresado);
+        if (codigoVipOpt.isEmpty()) {
+            throw new IllegalArgumentException("El código VIP ingresado no existe en la base de datos.");
+        }
+
+        CodigoVip codigoVip = codigoVipOpt.get();
+
+        // 🔹 Verificar si el código ya está utilizado
+        if (codigoVip.isUtilizado()) {
+            throw new IllegalArgumentException("Este código ya fue utilizado.");
+        }
+
+        // 🔹 Verificar si el código está reservado por otro usuario
+        if (codigoVip.getUsuarioAsignado() != null && codigoVip.getUsuarioAsignado().getId() != userId) {
+            throw new IllegalArgumentException("Este código VIP está reservado por otro usuario.");
+        }
+
+        // 🔹 Verificar VIP: Solo permitir nuevo código si cantidadRifas = 0 (cuenta vencida)
+       /* if (usuario.isEsVip()) {
+            if (usuario.getCantidadRifas() > 1) {
+                throw new IllegalArgumentException("Este usuario ya tiene un código VIP activo con rifas restantes. Agote las rifas para renovar.");
+            }
+
+            System.out.println("Renovando código VIP vencido para usuario " + userId + " (rifas restantes: 0)");
+        }*/
+
+        // 🔥 Activar VIP
+        usuario.setEsVip(true);
+        usuario.setCodigoVip(codigoIngresado);
+        usuario.setCantidadRifas(codigoVip.getCantidadRifas()); // Resetea rifas al nuevo código
+        usuario.setFechaRegistro(ZonedDateTime.now());
+
+        // 🔹 Marcar código como utilizado
+        codigoVip.setUtilizado(true);
+        codigoVip.setUsuarioAsignado(usuario);
+
+        // 🔹 Guardar cambios
+        usuarioRepository.save(usuario);
+        codigoVipRepository.save(codigoVip);
+
+        return usuario;
     }
+
+
+    public Usuario activarVip(int userId, String codigoIngresado) {
+        // Buscar el usuario
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
+
+        // Buscar el código VIP
+        Optional<CodigoVip> codigoVipOpt = codigoVipRepository.findByCodigo(codigoIngresado);
+        if (codigoVipOpt.isEmpty()) {
+            throw new IllegalArgumentException("El código VIP ingresado no existe en la base de datos.");
+        }
+
+        CodigoVip codigoVip = codigoVipOpt.get();
+
+        // Verificar si el código ya está utilizado
+        if (codigoVip.isUtilizado()) {
+            throw new IllegalArgumentException("Este código ya fue utilizado.");
+        }
+
+        // Verificar si el código está reservado por otro usuario
+        if (codigoVip.getUsuarioAsignado() != null && codigoVip.getUsuarioAsignado().getId() != userId) {
+            throw new IllegalArgumentException("Este código VIP está reservado por otro usuario.");
+        }
+
+        // 🔥 ELIMINAMOS LA CONDICIÓN DE RIFAS RESTANTES > 1
+        // → Permitimos comprar siempre, aunque tenga rifas pendientes
+
+        // 🔥 Activar / Renovar VIP
+        usuario.setEsVip(true);
+        usuario.setCodigoVip(codigoIngresado); // Actualiza al último código usado
+
+        // 🔥 ACUMULAR rifas en lugar de sobrescribir
+        int nuevasRifas = codigoVip.getCantidadRifas();
+        int rifasActuales = usuario.getCantidadRifas() != null ? usuario.getCantidadRifas() : 0;
+        usuario.setCantidadRifas(rifasActuales + nuevasRifas);
+
+        // Resetea el contador de 30 días con cada compra
+        usuario.setFechaRegistro(ZonedDateTime.now());
+
+        // Marcar código como utilizado
+        codigoVip.setUtilizado(true);
+        codigoVip.setUsuarioAsignado(usuario);
+
+        // Guardar cambios
+        usuarioRepository.save(usuario);
+        codigoVipRepository.save(codigoVip);
+
+        return usuario;
+    }
+
+
 
 
 }

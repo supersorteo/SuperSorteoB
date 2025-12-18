@@ -63,246 +63,14 @@ public class RifaService {
 
     private String mpAccessToken;
 
-   /* public Rifa crearRifa(Rifa rifa, String codigoVip) {
-        // Verificar si el usuario existe
-        Usuario usuario = usuarioRepository.findById(rifa.getUsuario().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + rifa.getUsuario().getId()));
-
-        // Manejo del código VIP (tu lógica actual)
-        if (codigoVip != null) {
-            if (!usuario.isEsVip()) {
-                CodigoVip codigo = codigoVipRepository.findByCodigo(codigoVip)
-                        .orElseThrow(() -> new IllegalArgumentException("Código VIP no válido."));
-                if (codigo.isUtilizado()) {
-                    throw new IllegalArgumentException("El código VIP ya fue utilizado.");
-                }
-                usuario.setEsVip(true);
-                usuario.setCodigoVip(codigoVip);
-                usuario.setCantidadRifas(codigo.getCantidadRifas());
-
-                usuario.setFechaRegistro(ZonedDateTime.now());
-
-                usuarioRepository.save(usuario);
-                codigo.setUtilizado(true);
-                codigoVipRepository.save(codigo);
-            } else if (!usuario.getCodigoVip().equals(codigoVip)) {
-                throw new IllegalArgumentException("El código VIP no corresponde al usuario.");
-            }
-        }
-
-        // Genera automáticamente el código de la rifa si no se proporcionó uno
-        if (rifa.getCode() == null || rifa.getCode().trim().isEmpty()) {
-            rifa.setCode(generateRaffleCode());
-        }
-
-        // Verificar límites de rifas, etc. (tu lógica actual)
-        int limiteRifas = usuario.isEsVip() ?
-                codigoVipRepository.findByCodigo(usuario.getCodigoVip())
-                        .map(CodigoVip::getCantidadRifas)
-                        .orElse(Integer.MAX_VALUE)
-                : 1;
-        long rifasCreadas = usuario.isEsVip() ? rifaRepository.countByUsuario(usuario)
-                : rifaRepository.countByUsuarioAndFechaSorteoBetween(usuario, LocalDate.now().withDayOfMonth(1), LocalDate.now().plusMonths(1).minusDays(1));
-        if (rifasCreadas >= limiteRifas) {
-            throw new IllegalArgumentException("Has alcanzado el límite de rifas permitidas.");
-        }
-
-        // Asignar el usuario y activar la rifa
-        rifa.setUsuario(usuario);
-        rifa.setActive(true);
-        return rifaRepository.save(rifa);
-    }*/
-
-    public Rifa crearRifa1(Rifa rifa, String codigoVip) {
-        // Verificar si el usuario existe
-        Usuario usuario = usuarioRepository.findById(rifa.getUsuario().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + rifa.getUsuario().getId()));
-
-        // Manejo del código VIP (tu lógica actual)
-        if (codigoVip != null) {
-            if (!usuario.isEsVip()) {
-                CodigoVip codigo = codigoVipRepository.findByCodigo(codigoVip)
-                        .orElseThrow(() -> new IllegalArgumentException("Código VIP no válido."));
-                if (codigo.isUtilizado()) {
-                    throw new IllegalArgumentException("El código VIP ya fue utilizado.");
-                }
-                usuario.setEsVip(true);
-                usuario.setCodigoVip(codigoVip);
-                usuario.setCantidadRifas(codigo.getCantidadRifas());
-
-                usuario.setFechaRegistro(ZonedDateTime.now());
-
-                usuarioRepository.save(usuario);
-                codigo.setUtilizado(true);
-                codigoVipRepository.save(codigo);
-            } else if (!usuario.getCodigoVip().equals(codigoVip)) {
-                throw new IllegalArgumentException("El código VIP no corresponde al usuario.");
-            }
-        }
-
-        // Genera automáticamente el código de la rifa si no se proporcionó uno
-        if (rifa.getCode() == null || rifa.getCode().trim().isEmpty()) {
-            rifa.setCode(generateRaffleCode());
-        }
-
-        // Verificar límites de rifas, etc. (tu lógica actual)
-        int limiteRifas = usuario.isEsVip() ?
-                codigoVipRepository.findByCodigo(usuario.getCodigoVip())
-                        .map(CodigoVip::getCantidadRifas)
-                        .orElse(Integer.MAX_VALUE)
-                : 1;
-        long rifasCreadas = usuario.isEsVip() ? rifaRepository.countByUsuario(usuario)
-                : rifaRepository.countByUsuarioAndFechaSorteoBetween(usuario, LocalDate.now().withDayOfMonth(1), LocalDate.now().plusMonths(1).minusDays(1));
-
-        System.out.println("Debug: Usuario ID " + usuario.getId() + ", limiteRifas = " + limiteRifas + ", rifasCreadas = " + rifasCreadas);
-        if (rifasCreadas >= limiteRifas) {
-            throw new IllegalArgumentException("Has alcanzado el límite de rifas permitidas.");
-        }
-
-        // Asignar el usuario y activar la rifa
-        rifa.setUsuario(usuario);
-        rifa.setActive(true);
-        Rifa savedRifa = rifaRepository.save(rifa); // Guarda la rifa
-
-        // 🔥 Decrementar rifas si VIP (nuevo)
-        if (usuario.isEsVip()) {
-            this.decrementarCantidadRifas(usuario.getId()); // Llama al decremento
-            System.out.println("Rifas restantes para usuario " + usuario.getId() + ": " + usuario.getCantidadRifas());
-        }
 
 
-        return savedRifa;
-    }
 
     public Rifa crearRifa0(Rifa rifa, String codigoVip) {
         // Verificar si el usuario existe
         Usuario usuario = usuarioRepository.findById(rifa.getUsuario().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + rifa.getUsuario().getId()));
 
-        // Manejo del código VIP (tu lógica actual)
-        if (codigoVip != null) {
-            if (!usuario.isEsVip()) {
-                CodigoVip codigo = codigoVipRepository.findByCodigo(codigoVip)
-                        .orElseThrow(() -> new IllegalArgumentException("Código VIP no válido."));
-                if (codigo.isUtilizado()) {
-                    throw new IllegalArgumentException("El código VIP ya fue utilizado.");
-                }
-                usuario.setEsVip(true);
-                usuario.setCodigoVip(codigoVip);
-                usuario.setCantidadRifas(codigo.getCantidadRifas());
-
-                usuario.setFechaRegistro(ZonedDateTime.now());
-
-                usuarioRepository.save(usuario);
-                codigo.setUtilizado(true);
-                codigoVipRepository.save(codigo);
-            } else if (!usuario.getCodigoVip().equals(codigoVip)) {
-                throw new IllegalArgumentException("El código VIP no corresponde al usuario.");
-            }
-        }
-
-        // Genera automáticamente el código de la rifa si no se proporcionó uno
-        if (rifa.getCode() == null || rifa.getCode().trim().isEmpty()) {
-            rifa.setCode(generateRaffleCode());
-        }
-
-        // Verificar límites de rifas, etc. (tu lógica actual)
-        int limiteRifas = usuario.isEsVip() ?
-                codigoVipRepository.findByCodigo(usuario.getCodigoVip())
-                        .map(CodigoVip::getCantidadRifas)
-                        .orElse(Integer.MAX_VALUE)
-                : 1;
-        long rifasCreadas = usuario.isEsVip() ? rifaRepository.countByUsuario(usuario)
-                : rifaRepository.countByUsuarioAndFechaSorteoBetween(usuario, LocalDate.now().withDayOfMonth(1), LocalDate.now().plusMonths(1).minusDays(1));
-
-        System.out.println("Debug: Usuario ID " + usuario.getId() + ", limiteRifas = " + limiteRifas + ", rifasCreadas = " + rifasCreadas);
-        if (rifasCreadas >= limiteRifas) {
-            throw new IllegalArgumentException("Has alcanzado el límite de rifas permitidas.");
-        }
-
-        // Asignar el usuario y activar la rifa
-        rifa.setUsuario(usuario);
-        rifa.setActive(true);
-        Rifa savedRifa = rifaRepository.save(rifa); // Guarda la rifa
-
-        // 🔥 Decrementar rifas si VIP (nuevo)
-        if (usuario.isEsVip()) {
-            this.decrementarCantidadRifas(usuario.getId()); // Llama al decremento
-            System.out.println("Rifas restantes para usuario " + usuario.getId() + ": " + usuario.getCantidadRifas());
-        }
-
-        return savedRifa;
-    }
-
-
-    public Rifa crearRifa00(Rifa rifa, String codigoVip) {
-        // Verificar si el usuario existe
-        Usuario usuario = usuarioRepository.findById(rifa.getUsuario().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + rifa.getUsuario().getId()));
-
-        // Manejo del código VIP (tu lógica actual)
-        if (codigoVip != null) {
-            if (!usuario.isEsVip()) {
-                CodigoVip codigo = codigoVipRepository.findByCodigo(codigoVip)
-                        .orElseThrow(() -> new IllegalArgumentException("Código VIP no válido."));
-                if (codigo.isUtilizado()) {
-                    throw new IllegalArgumentException("El código VIP ya fue utilizado.");
-                }
-                usuario.setEsVip(true);
-                usuario.setCodigoVip(codigoVip);
-                usuario.setCantidadRifas(codigo.getCantidadRifas());
-
-                usuario.setFechaRegistro(ZonedDateTime.now());
-
-                usuarioRepository.save(usuario);
-                codigo.setUtilizado(true);
-                codigoVipRepository.save(codigo);
-            } else if (!usuario.getCodigoVip().equals(codigoVip)) {
-                throw new IllegalArgumentException("El código VIP no corresponde al usuario.");
-            }
-        }
-
-        // Genera automáticamente el código de la rifa si no se proporcionó uno
-        if (rifa.getCode() == null || rifa.getCode().trim().isEmpty()) {
-            rifa.setCode(generateRaffleCode());
-        }
-
-        // Verificar límites de rifas
-        int limiteRifas = usuario.isEsVip() ?
-                codigoVipRepository.findByCodigo(usuario.getCodigoVip())
-                        .map(CodigoVip::getCantidadRifas)
-                        .orElse(Integer.MAX_VALUE)
-                : 1;
-        long rifasCreadas = usuario.isEsVip() ? rifaRepository.countByUsuarioAndCodigoVipUsado(usuario, usuario.getCodigoVip()) // Filtra por código actual
-                : rifaRepository.countByUsuarioAndFechaSorteoBetween(usuario, LocalDate.now().withDayOfMonth(1), LocalDate.now().plusMonths(1).minusDays(1));
-
-        System.out.println("Debug: Usuario ID " + usuario.getId() + ", limiteRifas = " + limiteRifas + ", rifasCreadas (filtradas por código) = " + rifasCreadas);
-        if (rifasCreadas >= limiteRifas) {
-            throw new IllegalArgumentException("Has alcanzado el límite de rifas permitidas para este código VIP.");
-        }
-
-        // Asignar el usuario, active, y nuevo campo
-        rifa.setUsuario(usuario);
-        rifa.setActive(true);
-        if (usuario.isEsVip()) {
-            rifa.setCodigoVipUsado(usuario.getCodigoVip()); // Asocia a código actual
-        }
-        Rifa savedRifa = rifaRepository.saveAndFlush(rifa); // 🔥 saveAndFlush fuerza persistencia inmediata
-        System.out.println("Rifa guardada con codigoVipUsado = " + savedRifa.getCodigoVipUsado()); // Log para confirmar set
-
-        // 🔥 Decrementar rifas si VIP
-        if (usuario.isEsVip()) {
-            this.decrementarCantidadRifas(usuario.getId());
-            System.out.println("Rifas restantes para usuario " + usuario.getId() + ": " + usuario.getCantidadRifas());
-        }
-
-        return savedRifa;
-    }
-
-    public Rifa crearRifa(Rifa rifa, String codigoVip) {
-        // Verificar si el usuario existe
-        Usuario usuario = usuarioRepository.findById(rifa.getUsuario().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + rifa.getUsuario().getId()));
 
         // Manejo del código VIP (tu lógica actual)
         if (codigoVip != null) {
@@ -355,6 +123,87 @@ public class RifaService {
         System.out.println("Rifa guardada con codigoVipUsado = " + savedRifa.getCodigoVipUsado()); // Confirma
 
         // 🔥 Decrementar rifas si VIP
+        if (usuario.isEsVip()) {
+            this.decrementarCantidadRifas(usuario.getId());
+            System.out.println("Rifas restantes para usuario " + usuario.getId() + ": " + usuario.getCantidadRifas());
+        }
+
+        return savedRifa;
+    }
+
+    public Rifa crearRifa(Rifa rifa, String codigoVip) {
+        // Verificar si el usuario existe
+        Usuario usuario = usuarioRepository.findById(rifa.getUsuario().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + rifa.getUsuario().getId()));
+
+        // 🔥 VALIDACIÓN: Cuenta VIP expirada (más de 30 días desde fechaRegistro)
+        if (usuario.isEsVip() && usuario.getFechaRegistro() != null) {
+            ZonedDateTime fechaRegistro = usuario.getFechaRegistro();
+            ZonedDateTime fechaExpiracion = fechaRegistro.plusDays(30);
+
+            if (ZonedDateTime.now().isAfter(fechaExpiracion)) {
+                // La cuenta ha expirado → desactivamos VIP automáticamente
+                usuario.setEsVip(false);
+                usuario.setCantidadRifas(0);
+                usuario.setCodigoVip(null); // Opcional: limpiar código viejo
+                usuarioRepository.save(usuario);
+
+                throw new IllegalArgumentException("Tu cuenta VIP ha expirado (más de 30 días desde la activación). Compra un nuevo código VIP para seguir creando rifas.");
+            }
+        }
+
+        // Manejo del código VIP (tu lógica actual para activación manual)
+        if (codigoVip != null) {
+            if (!usuario.isEsVip()) {
+                CodigoVip codigo = codigoVipRepository.findByCodigo(codigoVip)
+                        .orElseThrow(() -> new IllegalArgumentException("Código VIP no válido."));
+                if (codigo.isUtilizado()) {
+                    throw new IllegalArgumentException("El código VIP ya fue utilizado.");
+                }
+                usuario.setEsVip(true);
+                usuario.setCodigoVip(codigoVip);
+                usuario.setCantidadRifas(codigo.getCantidadRifas());
+                usuario.setFechaRegistro(ZonedDateTime.now()); // Resetea el contador de 30 días
+                usuarioRepository.save(usuario);
+                codigo.setUtilizado(true);
+                codigoVipRepository.save(codigo);
+            } else if (!usuario.getCodigoVip().equals(codigoVip)) {
+                throw new IllegalArgumentException("El código VIP no corresponde al usuario.");
+            }
+        }
+
+        // Genera código de rifa si no existe
+        if (rifa.getCode() == null || rifa.getCode().trim().isEmpty()) {
+            rifa.setCode(generateRaffleCode());
+        }
+
+        // Verificar límites de rifas (tu lógica actual)
+        int limiteRifas = usuario.isEsVip() ?
+                codigoVipRepository.findByCodigo(usuario.getCodigoVip())
+                        .map(CodigoVip::getCantidadRifas)
+                        .orElse(Integer.MAX_VALUE)
+                : 1;
+
+        long rifasCreadas = usuario.isEsVip() ?
+                rifaRepository.countByUsuarioAndCodigoVipUsado(usuario, usuario.getCodigoVip())
+                : rifaRepository.countByUsuarioAndFechaSorteoBetween(usuario, LocalDate.now().withDayOfMonth(1), LocalDate.now().plusMonths(1).minusDays(1));
+
+        System.out.println("Debug: Usuario ID " + usuario.getId() + ", limiteRifas = " + limiteRifas + ", rifasCreadas = " + rifasCreadas);
+
+        if (rifasCreadas >= limiteRifas) {
+            throw new IllegalArgumentException("Has alcanzado el límite de rifas permitidas para este código VIP.");
+        }
+
+        // Asignar datos a la rifa
+        rifa.setUsuario(usuario);
+        rifa.setActive(true);
+        if (usuario.isEsVip()) {
+            rifa.setCodigoVipUsado(usuario.getCodigoVip());
+        }
+
+        Rifa savedRifa = rifaRepository.saveAndFlush(rifa);
+
+        // Decrementar rifas restantes si es VIP
         if (usuario.isEsVip()) {
             this.decrementarCantidadRifas(usuario.getId());
             System.out.println("Rifas restantes para usuario " + usuario.getId() + ": " + usuario.getCantidadRifas());
